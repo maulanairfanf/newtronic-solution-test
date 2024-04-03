@@ -17,10 +17,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-onMounted(() => {
-  console.log("banner", props.banner);
-});
 </script>
 
 <template>

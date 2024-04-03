@@ -1,11 +1,40 @@
 <script setup>
-defineProps({
+import axios from "axios";
+import { ref } from "vue";
+
+const props = defineProps({
   item: {
     type: Object,
     default: () => {},
     required: true,
   },
 });
+
+async function handleDownload() {
+  // belum dapat mendownload video
+  const imageUrl = props.item.url;
+  const type =
+    props.item.type === "image"
+      ? `${props.item.title}.jpg`
+      : `${props.item.title}.mp4`;
+
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    const link = document.createElement("a");
+    link.href = url;
+
+    link.setAttribute("download", type);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Error downloading:", error);
+  }
+}
 </script>
 
 <template>
@@ -34,5 +63,8 @@ defineProps({
         <span>{{ item.description }}</span>
       </div>
     </v-card-item>
+    <v-card-actions>
+      <v-btn @click="handleDownload" color="orange"> Download </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
